@@ -1,5 +1,8 @@
 name: wikidata
 
+dependencies:
+  http: any
+
 dev_dependencies:
   guinness2: any
   mockito: any

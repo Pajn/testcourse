@@ -1,13 +1,21 @@
 import 'package:guinness2/guinness2.dart';
+import 'package:http/http.dart';
+import 'package:mockito/mockito.dart';
 import 'package:wikidata/src/wikidata_service.dart';
+
+class MockClient extends Mock implements Client {
+  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 main() {
   describe('WikidataService', () {
     describe('#getItem', () {
+      Client http;
       WikidataService target;
 
       beforeEach(() {
-        target = new WikidataService();
+        http = new MockClient();
+        target = new WikidataService(http);
       });
 
       it('should throw if the passed id is null', () {
@@ -24,6 +32,12 @@ main() {
 
       it('should set the the english label of the item', () {
         expect(target.getItem('Q1').label['en']).toEqual('universe');
+      });
+
+      it('should do an API request for the item', () {
+        target.getItem('Q1');
+
+        verify(http.get('https://www.wikidata.org/w/api.php?action=wbgetclaims&entity=Q1&format=json'));
       });
     });
   });
