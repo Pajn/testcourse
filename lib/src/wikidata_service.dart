@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:http/http.dart';
 
 class WikidataService {
@@ -8,9 +9,12 @@ class WikidataService {
 
   Item getItem(String id) {
     if (id == null || !idPattern.hasMatch(id)) throw new ArgumentError();
-    http.get('https://www.wikidata.org/w/api.php?action=wbgetclaims&entity=Q1&format=json');
+    _get({'action': 'wbgetclaims', 'entity': 'Q1', 'format': 'json'});
     return new Item({'en': 'universe'});
   }
+
+  Future<Response> _get(Map<String, String> queryParams) =>
+      http.get(new Uri.https('www.wikidata.org', '/w/api.php', queryParams).toString());
 }
 
 class Item {
