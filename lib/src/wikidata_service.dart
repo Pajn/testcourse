@@ -30,6 +30,7 @@ class WikidataService {
 
 class Item {
   final Map<String, String> label;
+  final Map<String, String> description;
 
   Item(this.label);
 }

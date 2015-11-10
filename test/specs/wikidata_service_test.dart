@@ -87,6 +87,31 @@ main() {
         verify(http.get(url({'action': 'wbgetentities', 'entity': 'Q1', 'format': 'json'})));
         verify(http.get(url({'action': 'wbgetentities', 'entity': 'Q2', 'format': 'json'})));
       });
+
+      it('should set the english description of the item', () async {
+        when(http.get(url({'action': 'wbgetentities', 'entity': 'Q1', 'format': 'json'}))).
+            thenReturn(response({
+              'entities': {
+                'Q1': {
+                  'descriptions': labels({'en': 'totality of planets, stars, galaxies, intergalactic space, or all matter or all energy'}),
+                }
+              }
+            }));
+        when(http.get(url({'action': 'wbgetentities', 'entity': 'Q2', 'format': 'json'}))).
+            thenReturn(response({
+              'entities': {
+                'Q2': {
+                  'descriptions': labels({'en': 'third planet closest to the Sun in the Solar System'}),
+                }
+              }
+            }));
+
+        final item1 = await target.getItem('Q1');
+        final item2 = await target.getItem('Q2');
+
+        expect(item1.description['en']).toEqual('totality of planets, stars, galaxies, intergalactic space, or all matter or all energy');
+        expect(item2.description['en']).toEqual('third planet closest to the Sun in the Solar System');
+      });
     });
   });
 }
