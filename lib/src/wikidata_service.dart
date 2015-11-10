@@ -2,6 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart';
 
+Map<String, String> flattenLocals(Map<String, Map<String, String>> locals) {
+  final flattenedLocals = {};
+  locals?.forEach((language, value) {
+    flattenedLocals[language] = value['value'];
+  });
+  return flattenedLocals;
+}
+
 class WikidataService {
   final RegExp idPattern = new RegExp(r'Q\d+');
   final Client http;
@@ -11,18 +19,14 @@ class WikidataService {
   Future<Item> getItem(String id) async {
     if (id == null || !idPattern.hasMatch(id)) throw new ArgumentError();
     final response = await _get({'action': 'wbgetentities', 'entity': id, 'format': 'json'});
-    final labels = {};
-    final descriptions = {};
+    var labels;
+    var descriptions;
 
     final data = (JSON.decode(response.body)['entities'] ?? {})[id];
 
     if (data != null) {
-      data['labels']?.forEach((language, value) {
-        labels[language] = value['value'];
-      });
-      data['descriptions']?.forEach((language, value) {
-        descriptions[language] = value['value'];
-      });
+      labels = flattenLocals(data['labels']);
+      descriptions = flattenLocals(data['descriptions']);
     }
 
     return new Item(labels, descriptions);

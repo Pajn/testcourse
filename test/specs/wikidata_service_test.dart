@@ -12,17 +12,17 @@ class MockClient extends Mock implements Client {
 url(Map<String, String> queryParams) =>
     new Uri.https('www.wikidata.org', '/w/api.php', queryParams).toString();
 
-labels(Map languages) {
-  final labels = {};
+locals(Map languages) {
+  final locals = {};
 
   languages.forEach((language, label) {
-    labels[language] = {
+    locals[language] = {
       'language': language,
       'value': label,
     };
   });
 
-  return labels;
+  return locals;
 }
 
 response(Map body, {int statusCode: 200}) async => new Response(JSON.encode(body), statusCode);
@@ -60,7 +60,7 @@ main() {
             thenReturn(response({
               'entities': {
                 'Q1': {
-                  'labels': labels({'en': 'universe'}),
+                  'labels': locals({'en': 'universe'}),
                 }
               }
             }));
@@ -68,7 +68,7 @@ main() {
             thenReturn(response({
               'entities': {
                 'Q2': {
-                  'labels': labels({'en': 'Earth'}),
+                  'labels': locals({'en': 'Earth'}),
                 }
               }
             }));
@@ -93,7 +93,7 @@ main() {
             thenReturn(response({
               'entities': {
                 'Q1': {
-                  'descriptions': labels({'en': 'totality of planets, stars, galaxies, intergalactic space, or all matter or all energy'}),
+                  'descriptions': locals({'en': 'totality of planets, stars, galaxies, intergalactic space, or all matter or all energy'}),
                 }
               }
             }));
@@ -101,7 +101,7 @@ main() {
             thenReturn(response({
               'entities': {
                 'Q2': {
-                  'descriptions': labels({'en': 'third planet closest to the Sun in the Solar System'}),
+                  'descriptions': locals({'en': 'third planet closest to the Sun in the Solar System'}),
                 }
               }
             }));
