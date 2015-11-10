@@ -36,8 +36,10 @@ main() {
 
       it('should do an API request for the item', () {
         target.getItem('Q1');
+        target.getItem('Q2');
 
         verify(http.get('https://www.wikidata.org/w/api.php?action=wbgetclaims&entity=Q1&format=json'));
+        verify(http.get('https://www.wikidata.org/w/api.php?action=wbgetclaims&entity=Q2&format=json'));
       });
     });
   });
