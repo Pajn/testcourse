@@ -21,6 +21,10 @@ main() {
       it('should throw if passed an invalid id', () {
         expect(() => target.getItem('P1')).toThrowWith(anInstanceOf: ArgumentError);
       });
+
+      it('should set the the english label of the item', () {
+        expect(target.getItem('Q1').label['en']).toEqual('universe');
+      });
     });
   });
 }

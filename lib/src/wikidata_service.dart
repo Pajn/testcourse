@@ -7,4 +7,6 @@ class WikidataService {
   }
 }
 
-class Item {}
+class Item {
+  final Map<String, String> label = {};
+}
