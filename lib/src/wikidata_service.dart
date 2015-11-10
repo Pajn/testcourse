@@ -12,6 +12,7 @@ class WikidataService {
     if (id == null || !idPattern.hasMatch(id)) throw new ArgumentError();
     final response = await _get({'action': 'wbgetentities', 'entity': id, 'format': 'json'});
     final labels = {};
+    final descriptions = {};
 
     final data = (JSON.decode(response.body)['entities'] ?? {})[id];
 
@@ -19,9 +20,12 @@ class WikidataService {
       data['labels']?.forEach((language, value) {
         labels[language] = value['value'];
       });
+      data['descriptions']?.forEach((language, value) {
+        descriptions[language] = value['value'];
+      });
     }
 
-    return new Item(labels);
+    return new Item(labels, descriptions);
   }
 
   Future<Response> _get(Map<String, String> queryParams) =>
@@ -32,5 +36,5 @@ class Item {
   final Map<String, String> label;
   final Map<String, String> description;
 
-  Item(this.label);
+  Item(this.label, this.description);
 }
