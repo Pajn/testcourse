@@ -4,8 +4,13 @@ import 'package:wikidata/src/wikidata_service.dart';
 main() {
   describe('WikidataService', () {
     describe('#getEntity', () {
+      WikidataService target;
+
+      beforeEach(() {
+        target = new WikidataService();
+      });
+
       it('should throw if the passed id is null', () {
-        final target = new WikidataService();
         expect(() => target.getEntity(null)).toThrowWith(anInstanceOf: ArgumentError);
       });
     });
