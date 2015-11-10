@@ -9,7 +9,7 @@ class WikidataService {
 
   Item getItem(String id) {
     if (id == null || !idPattern.hasMatch(id)) throw new ArgumentError();
-    _get({'action': 'wbgetclaims', 'entity': 'Q1', 'format': 'json'});
+    _get({'action': 'wbgetclaims', 'entity': id, 'format': 'json'});
     return new Item({'en': 'universe'});
   }
 
