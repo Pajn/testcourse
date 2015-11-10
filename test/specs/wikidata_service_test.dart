@@ -7,6 +7,9 @@ class MockClient extends Mock implements Client {
   noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
+url(Map<String, String> queryParams) =>
+    new Uri.https('www.wikidata.org', '/w/api.php', queryParams).toString();
+
 main() {
   describe('WikidataService', () {
     describe('#getItem', () {
@@ -38,8 +41,8 @@ main() {
         target.getItem('Q1');
         target.getItem('Q2');
 
-        verify(http.get('https://www.wikidata.org/w/api.php?action=wbgetclaims&entity=Q1&format=json'));
-        verify(http.get('https://www.wikidata.org/w/api.php?action=wbgetclaims&entity=Q2&format=json'));
+        verify(http.get(url({'action': 'wbgetclaims', 'entity': 'Q1', 'format': 'json'})));
+        verify(http.get(url({'action': 'wbgetclaims', 'entity': 'Q2', 'format': 'json'})));
       });
     });
   });
