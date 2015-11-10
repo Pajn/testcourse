@@ -17,6 +17,10 @@ main() {
       it('should return an entitiy if passed a correct id', () {
         expect(target.getItem('Q1')).toBeA(Item);
       });
+
+      it('should throw if passed an invalid id', () {
+        expect(() => target.getItem('P1')).toThrowWith(anInstanceOf: ArgumentError);
+      });
     });
   });
 }
