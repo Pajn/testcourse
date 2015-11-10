@@ -1,3 +1,5 @@
 class WikidataService {
-  getEntity(String id) {}
+  getEntity(String id) {
+    throw new ArgumentError();
+  }
 }
