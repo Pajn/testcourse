@@ -112,6 +112,53 @@ main() {
         expect(item1.description['en']).toEqual('totality of planets, stars, galaxies, intergalactic space, or all matter or all energy');
         expect(item2.description['en']).toEqual('third planet closest to the Sun in the Solar System');
       });
+
+      it('should set the english aliases of the item', () async {
+        when(http.get(url({'action': 'wbgetentities', 'entity': 'Q1', 'format': 'json'}))).
+            thenReturn(response({
+              'entities': {
+                'Q1': {
+                  'aliases': {
+                    'en': [
+                      {
+                        'language': 'en',
+                        'value': 'cosmos',
+                      },
+                      {
+                        'language': 'en',
+                        'value': 'The Universe',
+                      },
+                    ]
+                  },
+                }
+              }
+            }));
+        when(http.get(url({'action': 'wbgetentities', 'entity': 'Q2', 'format': 'json'}))).
+            thenReturn(response({
+              'entities': {
+                'Q2': {
+                  'aliases': {
+                    'en': [
+                      {
+                        'language': 'en',
+                        'value': 'Terra',
+                      },
+                      {
+                        'language': 'en',
+                        'value': 'the Blue Planet',
+                      },
+                    ]
+                  },
+                }
+              }
+            }));
+
+        final item1 = await target.getItem('Q1');
+        final item2 = await target.getItem('Q2');
+
+        expect(item1.aliases['en']).toEqual(['cosmos', 'The Universe']);
+        expect(item2.aliases['en']).toEqual(['Terra', 'the Blue Planet']);
+      });
     });
   });
 }

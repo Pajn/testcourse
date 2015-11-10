@@ -39,6 +39,7 @@ class WikidataService {
 class Item {
   final Map<String, String> label;
   final Map<String, String> description;
+  final Map<String, List<String>> aliases;
 
   Item(this.label, this.description);
 }
