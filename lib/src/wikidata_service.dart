@@ -21,15 +21,19 @@ class WikidataService {
     final response = await _get({'action': 'wbgetentities', 'entity': id, 'format': 'json'});
     var labels;
     var descriptions;
+    final aliases = {};
 
     final data = (JSON.decode(response.body)['entities'] ?? {})[id];
 
     if (data != null) {
       labels = flattenLocals(data['labels']);
       descriptions = flattenLocals(data['descriptions']);
+      data['aliases']?.forEach((language, languageAliases) {
+        aliases[language] = languageAliases.map((value) => value['value']).toList();
+      });
     }
 
-    return new Item(labels, descriptions);
+    return new Item(labels, descriptions, aliases);
   }
 
   Future<Response> _get(Map<String, String> queryParams) =>
@@ -41,5 +45,5 @@ class Item {
   final Map<String, String> description;
   final Map<String, List<String>> aliases;
 
-  Item(this.label, this.description);
+  Item(this.label, this.description, this.aliases);
 }
