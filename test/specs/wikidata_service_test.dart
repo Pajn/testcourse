@@ -16,10 +16,17 @@ locals(Map languages) {
   final locals = {};
 
   languages.forEach((language, label) {
-    locals[language] = {
-      'language': language,
-      'value': label,
-    };
+    if (label is String) {
+      locals[language] = {
+        'language': language,
+        'value': label,
+      };
+    } else if (label is List) {
+      locals[language] = label.map((value) => {
+        'language': language,
+        'value': value,
+      }).toList();
+    }
   });
 
   return locals;
@@ -118,18 +125,7 @@ main() {
             thenReturn(response({
               'entities': {
                 'Q1': {
-                  'aliases': {
-                    'en': [
-                      {
-                        'language': 'en',
-                        'value': 'cosmos',
-                      },
-                      {
-                        'language': 'en',
-                        'value': 'The Universe',
-                      },
-                    ]
-                  },
+                  'aliases': locals({'en': ['cosmos', 'The Universe']}),
                 }
               }
             }));
@@ -137,18 +133,7 @@ main() {
             thenReturn(response({
               'entities': {
                 'Q2': {
-                  'aliases': {
-                    'en': [
-                      {
-                        'language': 'en',
-                        'value': 'Terra',
-                      },
-                      {
-                        'language': 'en',
-                        'value': 'the Blue Planet',
-                      },
-                    ]
-                  },
+                  'aliases': locals({'en': ['Terra', 'the Blue Planet']}),
                 }
               }
             }));

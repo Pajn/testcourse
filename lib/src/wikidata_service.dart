@@ -5,7 +5,11 @@ import 'package:http/http.dart';
 Map<String, String> flattenLocals(Map<String, Map<String, String>> locals) {
   final flattenedLocals = {};
   locals?.forEach((language, value) {
-    flattenedLocals[language] = value['value'];
+    if (value is Map) {
+      flattenedLocals[language] = value['value'];
+    } else if (value is List) {
+      flattenedLocals[language] = value.map((value) => value['value']).toList();
+    }
   });
   return flattenedLocals;
 }
@@ -21,16 +25,14 @@ class WikidataService {
     final response = await _get({'action': 'wbgetentities', 'entity': id, 'format': 'json'});
     var labels;
     var descriptions;
-    final aliases = {};
+    var aliases;
 
     final data = (JSON.decode(response.body)['entities'] ?? {})[id];
 
     if (data != null) {
       labels = flattenLocals(data['labels']);
       descriptions = flattenLocals(data['descriptions']);
-      data['aliases']?.forEach((language, languageAliases) {
-        aliases[language] = languageAliases.map((value) => value['value']).toList();
-      });
+      aliases = flattenLocals(data['aliases']);
     }
 
     return new Item(labels, descriptions, aliases);
