@@ -14,7 +14,7 @@ main() {
         expect(() => target.getItem(null)).toThrowWith(anInstanceOf: ArgumentError);
       });
 
-      it('should return an entitiy if passed a correct id', () {
+      it('should return an item if passed a correct id', () {
         expect(target.getItem('Q1')).toBeA(Item);
       });
 
