@@ -8,5 +8,7 @@ class WikidataService {
 }
 
 class Item {
-  final Map<String, String> label = {};
+  final Map<String, String> label = {
+    'en': 'universe',
+  };
 }
