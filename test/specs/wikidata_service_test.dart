@@ -35,6 +35,7 @@ main() {
 
       it('should set the the english label of the item', () {
         expect(target.getItem('Q1').label['en']).toEqual('universe');
+        expect(target.getItem('Q2').label['en']).toEqual('Earth');
       });
 
       it('should do an API request for the item', () {
