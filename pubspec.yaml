@@ -1,0 +1,6 @@
+name: wikidata
+
+dev_dependencies:
+  guinness2: any
+  mockito: any
+  test: any
