@@ -1,8 +1,8 @@
 class WikidataService {
-  Entity getEntity(String id) {
+  Item getItem(String id) {
     if (id == null) throw new ArgumentError();
-    return new Entity();
+    return new Item();
   }
 }
 
-class Entity {}
+class Item {}

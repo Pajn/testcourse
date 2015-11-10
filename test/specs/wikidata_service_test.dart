@@ -3,7 +3,7 @@ import 'package:wikidata/src/wikidata_service.dart';
 
 main() {
   describe('WikidataService', () {
-    describe('#getEntity', () {
+    describe('#getItem', () {
       WikidataService target;
 
       beforeEach(() {
@@ -11,11 +11,11 @@ main() {
       });
 
       it('should throw if the passed id is null', () {
-        expect(() => target.getEntity(null)).toThrowWith(anInstanceOf: ArgumentError);
+        expect(() => target.getItem(null)).toThrowWith(anInstanceOf: ArgumentError);
       });
 
       it('should return an entitiy if passed a correct id', () {
-        expect(target.getEntity('Q1')).toBeA(Entity);
+        expect(target.getItem('Q1')).toBeA(Item);
       });
     });
   });
