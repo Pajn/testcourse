@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:guinness2/guinness2.dart';
 import 'package:http/http.dart';
 import 'package:mockito/mockito.dart';
@@ -19,6 +20,7 @@ main() {
       beforeEach(() {
         http = new MockClient();
         target = new WikidataService(http);
+        // when(http.get(any)).thenReturn(new Response('{}', 200));
       });
 
       it('should throw if the passed id is null', () {
@@ -34,6 +36,33 @@ main() {
       });
 
       it('should set the the english label of the item', () {
+        when(http.get(url({'action': 'wbgetentities', 'entity': 'Q1', 'format': 'json'}))).
+            thenReturn(new Response(JSON.encode({
+              'entities': {
+                'Q1': {
+                  'labels': {
+                    'en': {
+                      'language': 'en',
+                      'value': 'universe',
+                    }
+                  }
+                }
+              }
+            }), 200));
+        when(http.get(url({'action': 'wbgetentities', 'entity': 'Q2', 'format': 'json'}))).
+            thenReturn(new Response(JSON.encode({
+              'entities': {
+                'Q2': {
+                  'labels': {
+                    'en': {
+                      'language': 'en',
+                      'value': 'Earth',
+                    }
+                  }
+                }
+              }
+            }), 200));
+
         expect(target.getItem('Q1').label['en']).toEqual('universe');
         expect(target.getItem('Q2').label['en']).toEqual('Earth');
       });
