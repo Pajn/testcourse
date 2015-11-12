@@ -2,6 +2,7 @@ name: wikidata
 
 dependencies:
   http: any
+  quiver: '^0.21.0'
 
 dev_dependencies:
   guinness2: any

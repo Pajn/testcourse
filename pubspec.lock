@@ -97,6 +97,10 @@ packages:
     description: pub_semver
     source: hosted
     version: "1.2.3"
+  quiver:
+    description: quiver
+    source: hosted
+    version: "0.21.4"
   shelf:
     description: shelf
     source: hosted

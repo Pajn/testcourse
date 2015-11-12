@@ -83,14 +83,12 @@ statement(String statementId, mainsnak, {Map qualifiers, Map references}) {
   };
 
   if (qualifiers != null) {
-    statement['qualifiers'] = [];
+    statement['qualifiers'] = {};
 
-    references.forEach((property, snak) {
-      statement['qualifiers'].add({
-        'snaks': {property: [snak]},
-        'snaks-order': [property],
-      });
+    qualifiers.forEach((property, snaks) {
+      statement['qualifiers'][property] = snaks;
     });
+    statement['qualifiers-order'] = qualifiers.values.toList();
   }
 
   if (references != null) {
@@ -298,7 +296,7 @@ main() {
 
         final item = await target.getItem('Q1');
 
-        expect(item.statements['P580']).toEqual([new TimeValue('4015139-6')]);
+        expect(item.statements['P580']).toEqual([new TimeValue('-13798000000-00-00T00:00:00Z', 3)]);
         expect(item.statements['P580'].first.qualifiers['P459']).toEqual(
           [new ItemValue(15605), new ItemValue(76250)]
         );
