@@ -83,9 +83,10 @@ class Item {
 }
 
 abstract class Value {
+  final Map<String, List<Value>> qualifiers;
   final Map<String, List<Value>> references;
 
-  Value({this.references});
+  Value({this.qualifiers, this.references});
 }
 
 class ItemValue extends Value {
@@ -107,6 +108,21 @@ class StringValue extends Value {
   final String value;
 
   StringValue(this.value, {Map<String, List<ItemValue>> references}) : super(references: references);
+
+  @override
+  operator ==(other) => other is StringValue && other.value == value;
+
+  @override
+  get hashCode => value.hashCode;
+
+  @override
+  toString() => 'StringValue(Q$value)';
+}
+
+class TimeValue extends Value {
+  final String value;
+
+  TimeValue(this.value, {Map<String, List<ItemValue>> references}) : super(references: references);
 
   @override
   operator ==(other) => other is StringValue && other.value == value;

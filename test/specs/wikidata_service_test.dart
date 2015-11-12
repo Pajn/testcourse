@@ -55,13 +55,43 @@ stringSnak(String property, String value) => {
   'datatype': 'string'
 };
 
-statement(String statementId, mainsnak, {Map references}) {
+timeSnak(String property, String time, int precision, {
+      int timezone: 0, int before: 0, int after: 0,
+      String calendarmodel: 'http://www.wikidata.org/entity/Q1985727'}) => {
+  'snaktype': 'value',
+  'property': property,
+  'datavalue': {
+      'value': {
+          "time": time,
+          "timezone": timezone,
+          "before": before,
+          "after": after,
+          "precision": precision,
+          "calendarmodel": calendarmodel
+      },
+      'type': 'time'
+  },
+  'datatype': 'time'
+};
+
+statement(String statementId, mainsnak, {Map qualifiers, Map references}) {
   final statement = {
     'mainsnak': mainsnak,
     'type': 'statement',
     'id': statementId,
     'rank': 'normal',
   };
+
+  if (qualifiers != null) {
+    statement['qualifiers'] = [];
+
+    references.forEach((property, snak) {
+      statement['qualifiers'].add({
+        'snaks': {property: [snak]},
+        'snaks-order': [property],
+      });
+    });
+  }
 
   if (references != null) {
     statement['references'] = [];
@@ -245,6 +275,34 @@ main() {
 
         expect(item.statements['P227']).toEqual([new StringValue('4015139-6')]);
         expect(item.statements['P227'].first.references['P143']).toEqual([new ItemValue(36578)]);
+      });
+
+      it('should set the qualifiers of a statement', () async {
+        when(http.get(url({'action': 'wbgetentities', 'entity': 'Q1', 'format': 'json'}))).
+            thenReturn(response({
+              'entities': {
+                'Q1': {
+                  'claims': {
+                    'P580': [statement(
+                      r'Q1$789eef0c-4108-cdda-1a63-505cdd324564',
+                      timeSnak('P580', '-13798000000-00-00T00:00:00Z', 3),
+                      qualifiers: {
+                        'P459': [itemSnak('P459', 15605), itemSnak('P459', 76250)],
+                        'P805': [itemSnak('P805', 500699)],
+                      }
+                    )],
+                  },
+                }
+              }
+            }));
+
+        final item = await target.getItem('Q1');
+
+        expect(item.statements['P580']).toEqual([new TimeValue('4015139-6')]);
+        expect(item.statements['P580'].first.qualifiers['P459']).toEqual(
+          [new ItemValue(15605), new ItemValue(76250)]
+        );
+        expect(item.statements['P580'].first.qualifiers['P805']).toEqual([new ItemValue(500699)]);
       });
     });
   });
