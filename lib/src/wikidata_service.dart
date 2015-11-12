@@ -26,6 +26,7 @@ class WikidataService {
     var labels;
     var descriptions;
     var aliases;
+    var statements;
 
     final data = (JSON.decode(response.body)['entities'] ?? {})[id];
 
@@ -35,7 +36,7 @@ class WikidataService {
       aliases = flattenLocals(data['aliases']);
     }
 
-    return new Item(labels, descriptions, aliases);
+    return new Item(labels, descriptions, aliases, statements);
   }
 
   Future<Response> _get(Map<String, String> queryParams) =>
@@ -46,6 +47,13 @@ class Item {
   final Map<String, String> label;
   final Map<String, String> description;
   final Map<String, List<String>> aliases;
+  final Map<String, List<ItemValue>> statements;
 
-  Item(this.label, this.description, this.aliases);
+  Item(this.label, this.description, this.aliases, this.statements);
+}
+
+class ItemValue {
+  final String id;
+
+  ItemValue(this.id);
 }

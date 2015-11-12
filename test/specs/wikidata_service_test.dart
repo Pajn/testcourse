@@ -144,6 +144,67 @@ main() {
         expect(item1.aliases['en']).toEqual(['cosmos', 'The Universe']);
         expect(item2.aliases['en']).toEqual(['Terra', 'the Blue Planet']);
       });
+
+      it('should set the statements of the item', () async {
+        when(http.get(url({'action': 'wbgetentities', 'entity': 'Q1', 'format': 'json'}))).
+            thenReturn(response({
+              'entities': {
+                'Q1': {
+                  'claims': {
+                    'P31': [{
+                        'mainsnak': {
+                            'snaktype': "value",
+                            'property': "P31",
+                            'datavalue': {
+                                'value': {
+                                    'entity-type': 'item',
+                                    'numeric-id': 1454986
+                                },
+                                'type': 'wikibase-entityid'
+                            },
+                            'datatype': 'wikibase-item'
+                        },
+                        'type': 'statement',
+                        'id': r'q1$0479EB23-FC5B-4EEC-9529-CEE21D6C6FA9',
+                        'rank': 'normal'
+                    }],
+                  },
+                }
+              }
+            }));
+        when(http.get(url({'action': 'wbgetentities', 'entity': 'Q2', 'format': 'json'}))).
+            thenReturn(response({
+              'entities': {
+                'Q2': {
+                  'claims': {
+                    'P31': [{
+                        'mainsnak': {
+                            'snaktype': "value",
+                            'property': "P31",
+                            'datavalue': {
+                                'value': {
+                                    'entity-type': 'item',
+                                    'numeric-id': 3504248
+                                },
+                                'type': 'wikibase-entityid'
+                            },
+                            'datatype': 'wikibase-item'
+                        },
+                        'type': 'statement',
+                        'id': r'Q2$50fad68d-4f91-f878-6f29-e655af54690e',
+                        'rank': 'normal'
+                    }],
+                  },
+                }
+              }
+            }));
+
+        final item1 = await target.getItem('Q1');
+        final item2 = await target.getItem('Q2');
+
+        expect(item1.statements['P31']).toEqual([new ItemValue('Q1454986')]);
+        expect(item2.statements['P31']).toEqual([new ItemValue('Q3504248')]);
+      });
     });
   });
 }
