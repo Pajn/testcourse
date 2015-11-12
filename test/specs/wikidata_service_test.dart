@@ -32,60 +32,47 @@ locals(Map languages) {
   return locals;
 }
 
-itemStatement(String statementId, String property, int itemId) => {
-  'mainsnak': {
-      'snaktype': 'value',
-      'property': property,
-      'datavalue': {
-          'value': {
-              'entity-type': 'item',
-              'numeric-id': itemId
-          },
-          'type': 'wikibase-entityid'
+itemSnak(String property, int itemId) => {
+  'snaktype': 'value',
+  'property': property,
+  'datavalue': {
+      'value': {
+          'entity-type': 'item',
+          'numeric-id': itemId
       },
-      'datatype': 'wikibase-item'
+      'type': 'wikibase-entityid'
   },
-  'type': 'statement',
-  'id': statementId,
-  'rank': 'normal'
+  'datatype': 'wikibase-item'
 };
 
-stringStatement(String statementId, String property, String value, Map refereces) {
+stringSnak(String property, String value) => {
+  'snaktype': 'value',
+  'property': property,
+  'datavalue': {
+      'value': value,
+      'type': 'string'
+  },
+  'datatype': 'string'
+};
+
+statement(String statementId, mainsnak, {Map references}) {
   final statement = {
-    'mainsnak': {
-        'snaktype': 'value',
-        'property': property,
-        'datavalue': {
-            'value': value,
-            'type': 'string'
-        },
-        'datatype': 'string'
-    },
+    'mainsnak': mainsnak,
     'type': 'statement',
     'id': statementId,
     'rank': 'normal',
-    'references': [],
   };
 
-  refereces.forEach((property, id) {
-    statement['references'].add({
-      'snaks': {
-        property: [{
-          'snaktype': 'value',
-          'property': property,
-          'datavalue': {
-            'value': {
-              'entity-type': 'item',
-              'numeric-id': id
-            },
-            'type': 'wikibase-entityid'
-          },
-          'datatype': 'wikibase-item'
-        }],
-      },
-      'snaks-order': [property]
+  if (references != null) {
+    statement['references'] = [];
+
+    references.forEach((property, snak) {
+      statement['references'].add({
+        'snaks': {property: [snak]},
+        'snaks-order': [property],
+      });
     });
-  });
+  }
 
   return statement;
 }
@@ -209,7 +196,10 @@ main() {
               'entities': {
                 'Q1': {
                   'claims': {
-                    'P31': [itemStatement(r'q1$0479EB23-FC5B-4EEC-9529-CEE21D6C6FA9', 'p31', 1454986)],
+                    'P31': [statement(
+                      r'q1$0479EB23-FC5B-4EEC-9529-CEE21D6C6FA9',
+                      itemSnak('p31', 1454986)
+                    )],
                   },
                 }
               }
@@ -219,7 +209,10 @@ main() {
               'entities': {
                 'Q2': {
                   'claims': {
-                    'P31': [itemStatement(r'Q2$50fad68d-4f91-f878-6f29-e655af54690e', 'p31', 3504248)],
+                    'P31': [statement(
+                      r'Q2$50fad68d-4f91-f878-6f29-e655af54690e',
+                      itemSnak('p31', 3504248)
+                    )],
                   },
                 }
               }
@@ -238,11 +231,10 @@ main() {
               'entities': {
                 'Q2': {
                   'claims': {
-                    'P227': [stringStatement(
+                    'P227': [statement(
                       r'q2$B43AE569-AB2C-4E4F-BA90-DC56CD6DD24B',
-                      'P227',
-                      '4015139-6',
-                      {'P143':36578}
+                      stringSnak('P227', '4015139-6'),
+                      references: {'P143': itemSnak('P143', 36578)}
                     )],
                   },
                 }

@@ -14,6 +14,20 @@ Map<String, String> flattenLocals(Map<String, Map<String, String>> locals) {
   return flattenedLocals;
 }
 
+parseSnak(Map snak, {Map<String, List<Value>> references}) {
+  if (snak['datatype'] == 'wikibase-item') {
+    return new ItemValue(
+      snak['datavalue']['value']['numeric-id'],
+      references: references
+    );
+  } else if (snak['datatype'] == 'string') {
+    return new StringValue(
+      snak['datavalue']['value'],
+      references: references
+    );
+  }
+}
+
 class WikidataService {
   final RegExp idPattern = new RegExp(r'Q\d+');
   final Client http;
@@ -37,26 +51,16 @@ class WikidataService {
       data['claims']?.forEach((property, claims) {
         statements[property] = claims
           .map((claim) {
-            final type = claim['mainsnak']['datatype'];
             final references = {};
             claim['references']?.forEach((reference) {
               reference['snaks']?.forEach((property, reference) {
                 references[property] = reference
-                  .map((reference) => new ItemValue(reference['datavalue']['value']['numeric-id']))
+                  .map(parseSnak)
                   .toList();
               });
             });
-            if (type == 'wikibase-item') {
-              return new ItemValue(
-                claim['mainsnak']['datavalue']['value']['numeric-id'],
-                references: references
-              );
-            } else if (type == 'string') {
-              return new StringValue(
-                claim['mainsnak']['datavalue']['value'],
-                references: references
-              );
-            }
+
+            return parseSnak(claim['mainsnak'], references: references);
           })
           .toList();
       });
@@ -79,7 +83,7 @@ class Item {
 }
 
 abstract class Value {
-  final Map<String, List<ItemValue>> references;
+  final Map<String, List<Value>> references;
 
   Value({this.references});
 }
