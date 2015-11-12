@@ -232,7 +232,7 @@ main() {
         );
 
         expect(newItem).toEqual(new Item({'en': 'test'}, {}, {}, {
-          'P42': [new Statement(new StringValue('foo')), new Statement(new StringValue('bar'))]
+          'P42': [new Statement(new StringValue('bar'))]
         }));
       });
     });
