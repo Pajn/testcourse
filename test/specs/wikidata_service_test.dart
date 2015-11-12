@@ -310,15 +310,19 @@ main() {
     });
 
     describe('#addStatement', () {
-      it('should return a new Item with the statement', () {
-        final oldItem = new Item({'en': 'test'}, {}, {}, {'P42': [new StringValue('foo')]});
-        final newItem = target.addStatement(oldItem, 'P42', new Statement(new StringValue('bar')));
+      it('should return a new Item with the statement added', () async {
+        final oldItem = new Item({'en': 'test'}, {}, {}, {'P42': [
+          new Statement(new StringValue('foo'))
+        ]});
+        final newItem = await target.addStatement(
+          oldItem, 'P42', new Statement(new StringValue('bar'))
+        );
 
         expect(oldItem).toEqual(new Item({'en': 'test'}, {}, {}, {
-          'P42': [new StringValue('foo')]
+          'P42': [new Statement(new StringValue('foo'))]
         }));
         expect(newItem).toEqual(new Item({'en': 'test'}, {}, {}, {
-          'P42': [new StringValue('foo'), new StringValue('bar')]
+          'P42': [new Statement(new StringValue('foo')), new Statement(new StringValue('bar'))]
         }));
       });
     });

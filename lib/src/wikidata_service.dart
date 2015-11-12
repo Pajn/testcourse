@@ -52,6 +52,14 @@ class WikidataService {
   WikidataService(this.http);
 
   Future<Item> addStatement(Item item, String property, Statement statement) async {
+    final statements = {};
+    item.statements.forEach((property, oldStatements) {
+      statements[property] = new List.from(oldStatements);
+    });
+    statements[property].add(statement);
+    final updatedItem = new Item(item.label, item.description, item.aliases, statements);
+
+    return updatedItem;
   }
 
   Future<Item> getItem(String id) async {
@@ -111,6 +119,18 @@ class Item {
   final Map<String, List<Statement>> statements;
 
   Item(this.label, this.description, this.aliases, this.statements);
+
+@override
+operator ==(other) => other is Item &&
+  mapsEqual(other.label, label) && mapsEqual(other.description, description) &&
+  _multiMapEquals(other.aliases, aliases) &&
+  _multiMapEquals(other.statements, statements);
+
+@override
+get hashCode => hashObjects([label, description, aliases, statements]);
+
+@override
+toString() => 'Item($label, description: $description, aliases: $aliases, statements: $statements)';
 }
 
 class Statement {
