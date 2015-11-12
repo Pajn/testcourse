@@ -51,6 +51,9 @@ class WikidataService {
 
   WikidataService(this.http);
 
+  Future<Item> addStatement(Item item, String property, Statement statement) async {
+  }
+
   Future<Item> getItem(String id) async {
     if (id == null || !idPattern.hasMatch(id)) throw new ArgumentError();
     final response = await _get({'action': 'wbgetentities', 'entity': id, 'format': 'json'});

@@ -109,16 +109,16 @@ response(Map body, {int statusCode: 200}) async => new Response(JSON.encode(body
 
 main() {
   describe('WikidataService', () {
+    Client http;
+    WikidataService target;
+
+    beforeEach(() {
+      http = new MockClient();
+      target = new WikidataService(http);
+      when(http.get(any)).thenReturn(response({}));
+    });
+
     describe('#getItem', () {
-      Client http;
-      WikidataService target;
-
-      beforeEach(() {
-        http = new MockClient();
-        target = new WikidataService(http);
-        when(http.get(any)).thenReturn(response({}));
-      });
-
       it('should throw if the passed id is null', () async {
         target.getItem(null).catchError(expectAsync((e) {
           expect(e).toBeA(ArgumentError);
@@ -306,6 +306,20 @@ main() {
             'P805': [new ItemValue(500699)],
           }
         )]);
+      });
+    });
+
+    describe('#addStatement', () {
+      it('should return a new Item with the statement', () {
+        final oldItem = new Item({'en': 'test'}, {}, {}, {'P42': [new StringValue('foo')]});
+        final newItem = target.addStatement(oldItem, 'P42', new Statement(new StringValue('bar')));
+
+        expect(oldItem).toEqual(new Item({'en': 'test'}, {}, {}, {
+          'P42': [new StringValue('foo')]
+        }));
+        expect(newItem).toEqual(new Item({'en': 'test'}, {}, {}, {
+          'P42': [new StringValue('foo'), new StringValue('bar')]
+        }));
       });
     });
   });
