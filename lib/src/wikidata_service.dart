@@ -42,11 +42,10 @@ class WikidataService {
   WikidataService(this.http);
 
   Future<Item> addStatement(Item item, String property, Statement statement) async {
-    final statements = {};
+    final statements = {property: []};
     item.statements.forEach((property, oldStatements) {
       statements[property] = new List.from(oldStatements);
     });
-    statements.putIfAbsent(property, () => []);
     statements[property].add(statement);
     final updatedItem = new Item(item.label, item.description, item.aliases, statements);
 
