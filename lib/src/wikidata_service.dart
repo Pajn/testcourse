@@ -1,7 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart';
+import 'package:quiver/collection.dart';
 import 'package:quiver/core.dart';
+
+bool _multiMapEquals(Map a, Map b) {
+  if ((a == null) != (b == null)) return false;
+  if (a.length != b.length) return false;
+
+  for (var key in a.keys) {
+    if (!listsEqual(a[key], b[key])) return false;
+  }
+
+  return true;
+}
 
 Map<String, String> flattenLocals(Map<String, Map<String, String>> locals) {
   final flattenedLocals = {};
@@ -15,19 +27,11 @@ Map<String, String> flattenLocals(Map<String, Map<String, String>> locals) {
   return flattenedLocals;
 }
 
-parseSnak(Map snak, {Map<String, List<Value>> qualifiers, Map<String, List<Value>> references}) {
+parseSnak(Map snak) {
   if (snak['datatype'] == 'wikibase-item') {
-    return new ItemValue(
-      snak['datavalue']['value']['numeric-id'],
-      qualifiers: qualifiers,
-      references: references
-    );
+    return new ItemValue(snak['datavalue']['value']['numeric-id']);
   } else if (snak['datatype'] == 'string') {
-    return new StringValue(
-      snak['datavalue']['value'],
-      qualifiers: qualifiers,
-      references: references
-    );
+    return new StringValue(snak['datavalue']['value']);
   } else if (snak['datatype'] == 'time') {
     final value = snak['datavalue']['value'];
     return new TimeValue(
@@ -36,9 +40,7 @@ parseSnak(Map snak, {Map<String, List<Value>> qualifiers, Map<String, List<Value
       timezone: value['timezone'],
       before: value['before'],
       after: value['after'],
-      calendarmodel: value['calendarmodel'],
-      qualifiers: qualifiers,
-      references: references
+      calendarmodel: value['calendarmodel']
     );
   }
 }
@@ -82,7 +84,11 @@ class WikidataService {
               });
             });
 
-            return parseSnak(claim['mainsnak'], qualifiers: qualifiers, references: references);
+            return new Statement(
+              parseSnak(claim['mainsnak']),
+              qualifiers: qualifiers,
+              references: references
+            );
           })
           .toList();
       });
@@ -99,24 +105,38 @@ class Item {
   final Map<String, String> label;
   final Map<String, String> description;
   final Map<String, List<String>> aliases;
-  final Map<String, List<Value>> statements;
+  final Map<String, List<Statement>> statements;
 
   Item(this.label, this.description, this.aliases, this.statements);
 }
 
-abstract class Value {
+class Statement {
+  final Value value;
+
   final Map<String, List<Value>> qualifiers;
   final Map<String, List<Value>> references;
 
-  Value({this.qualifiers, this.references});
+  Statement(this.value, {Map<String, List<Value>> qualifiers, Map<String, List<Value>> references})
+    : this.qualifiers = qualifiers ?? {}, this.references = references ?? {};
+
+  @override
+  operator ==(other) => other is Statement && other.value == value &&
+    _multiMapEquals(other.qualifiers, qualifiers) &&
+    _multiMapEquals(other.references, references);
+
+  @override
+  get hashCode => hashObjects([value, qualifiers, references]);
+
+  @override
+  toString() => 'Statement($value, qualifiers: $qualifiers, references: $references)';
 }
+
+abstract class Value {}
 
 class ItemValue extends Value {
   final int id;
 
-  ItemValue(this.id, {Map<String, List<ItemValue>> qualifiers,
-                      Map<String, List<ItemValue>> references})
-      : super(qualifiers: qualifiers, references: references);
+  ItemValue(this.id);
 
   @override
   operator ==(other) => other is ItemValue && other.id == id;
@@ -131,9 +151,7 @@ class ItemValue extends Value {
 class StringValue extends Value {
   final String value;
 
-  StringValue(this.value, {Map<String, List<ItemValue>> qualifiers,
-                           Map<String, List<ItemValue>> references})
-      : super(qualifiers: qualifiers, references: references);
+  StringValue(this.value);
 
   @override
   operator ==(other) => other is StringValue && other.value == value;
@@ -155,9 +173,7 @@ class TimeValue extends Value {
 
   TimeValue(this.time, this.precision, {
       this.timezone: 0, this.before: 0, this.after: 0,
-      this.calendarmodel: 'http://www.wikidata.org/entity/Q1985727',
-      Map<String, List<ItemValue>> qualifiers, Map<String, List<ItemValue>> references})
-      : super(qualifiers: qualifiers, references: references);
+      this.calendarmodel: 'http://www.wikidata.org/entity/Q1985727'});
 
   @override
   operator ==(other) => other is TimeValue && other.time == time && other.precision == precision &&

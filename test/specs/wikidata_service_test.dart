@@ -249,8 +249,8 @@ main() {
         final item1 = await target.getItem('Q1');
         final item2 = await target.getItem('Q2');
 
-        expect(item1.statements['P31']).toEqual([new ItemValue(1454986)]);
-        expect(item2.statements['P31']).toEqual([new ItemValue(3504248)]);
+        expect(item1.statements['P31']).toEqual([new Statement(new ItemValue(1454986))]);
+        expect(item2.statements['P31']).toEqual([new Statement(new ItemValue(3504248))]);
       });
 
       it('should set the references of a statement', () async {
@@ -271,8 +271,10 @@ main() {
 
         final item = await target.getItem('Q2');
 
-        expect(item.statements['P227']).toEqual([new StringValue('4015139-6')]);
-        expect(item.statements['P227'].first.references['P143']).toEqual([new ItemValue(36578)]);
+        expect(item.statements['P227']).toEqual([new Statement(
+          new StringValue('4015139-6'),
+          references: {'P143': [new ItemValue(36578)]}
+        )]);
       });
 
       it('should set the qualifiers of a statement', () async {
@@ -296,11 +298,14 @@ main() {
 
         final item = await target.getItem('Q1');
 
-        expect(item.statements['P580']).toEqual([new TimeValue('-13798000000-00-00T00:00:00Z', 3)]);
-        expect(item.statements['P580'].first.qualifiers['P459']).toEqual(
-          [new ItemValue(15605), new ItemValue(76250)]
-        );
-        expect(item.statements['P580'].first.qualifiers['P805']).toEqual([new ItemValue(500699)]);
+
+        expect(item.statements['P580']).toEqual([new Statement(
+          new TimeValue('-13798000000-00-00T00:00:00Z', 3),
+          qualifiers: {
+            'P459': [new ItemValue(15605), new ItemValue(76250)],
+            'P805': [new ItemValue(500699)],
+          }
+        )]);
       });
     });
   });
