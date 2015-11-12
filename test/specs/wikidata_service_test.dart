@@ -50,7 +50,45 @@ itemStatement(String statementId, String property, int itemId) => {
   'rank': 'normal'
 };
 
+stringStatement(String statementId, String property, String value, Map refereces) {
+  final statement = {
+    'mainsnak': {
+        'snaktype': 'value',
+        'property': property,
+        'datavalue': {
+            'value': value,
+            'type': 'string'
+        },
+        'datatype': 'string'
+    },
+    'type': 'statement',
+    'id': statementId,
+    'rank': 'normal',
+    'references': [],
+  };
 
+  refereces.forEach((property, id) {
+    statement['references'].add({
+      'snaks': {
+        property: [{
+          'snaktype': 'value',
+          'property': property,
+          'datavalue': {
+            'value': {
+              'entity-type': 'item',
+              'numeric-id': id
+            },
+            'type': 'wikibase-entityid'
+          },
+          'datatype': 'wikibase-item'
+        }],
+      },
+      'snaks-order': [property]
+    });
+  });
+
+  return statement;
+}
 
 response(Map body, {int statusCode: 200}) async => new Response(JSON.encode(body), statusCode);
 
@@ -192,6 +230,29 @@ main() {
 
         expect(item1.statements['P31']).toEqual([new ItemValue(1454986)]);
         expect(item2.statements['P31']).toEqual([new ItemValue(3504248)]);
+      });
+
+      it('should set the references of a statement', () async {
+        when(http.get(url({'action': 'wbgetentities', 'entity': 'Q2', 'format': 'json'}))).
+            thenReturn(response({
+              'entities': {
+                'Q2': {
+                  'claims': {
+                    'P227': [stringStatement(
+                      r'q2$B43AE569-AB2C-4E4F-BA90-DC56CD6DD24B',
+                      'P227',
+                      '4015139-6',
+                      {'P143':36578}
+                    )],
+                  },
+                }
+              }
+            }));
+
+        final item = await target.getItem('Q2');
+
+        expect(item.statements['P227']).toEqual([new StringValue('4015139-6')]);
+        expect(item.statements['P227'].first.references['P143']).toEqual([new ItemValue(36578)]);
       });
     });
   });

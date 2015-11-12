@@ -52,12 +52,16 @@ class Item {
   final Map<String, String> label;
   final Map<String, String> description;
   final Map<String, List<String>> aliases;
-  final Map<String, List<ItemValue>> statements;
+  final Map<String, List<Value>> statements;
 
   Item(this.label, this.description, this.aliases, this.statements);
 }
 
-class ItemValue {
+abstract class Value {
+  final Map<String, List<ItemValue>> references = {};
+}
+
+class ItemValue extends Value {
   final int id;
 
   ItemValue(this.id);
@@ -70,4 +74,10 @@ class ItemValue {
 
   @override
   toString() => 'ItemValue(Q$id)';
+}
+
+class StringValue extends Value {
+  final String value;
+
+  StringValue(this.value);
 }
