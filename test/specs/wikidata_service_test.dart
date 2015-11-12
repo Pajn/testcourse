@@ -202,8 +202,8 @@ main() {
         final item1 = await target.getItem('Q1');
         final item2 = await target.getItem('Q2');
 
-        expect(item1.statements['P31']).toEqual([new ItemValue('Q1454986')]);
-        expect(item2.statements['P31']).toEqual([new ItemValue('Q3504248')]);
+        expect(item1.statements['P31']).toEqual([new ItemValue(1454986)]);
+        expect(item2.statements['P31']).toEqual([new ItemValue(3504248)]);
       });
     });
   });

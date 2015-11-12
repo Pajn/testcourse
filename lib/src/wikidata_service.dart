@@ -26,7 +26,7 @@ class WikidataService {
     var labels;
     var descriptions;
     var aliases;
-    var statements;
+    var statements = {};
 
     final data = (JSON.decode(response.body)['entities'] ?? {})[id];
 
@@ -34,6 +34,11 @@ class WikidataService {
       labels = flattenLocals(data['labels']);
       descriptions = flattenLocals(data['descriptions']);
       aliases = flattenLocals(data['aliases']);
+      data['claims']?.forEach((property, claims) {
+        statements[property] = claims
+          .map((claim) => new ItemValue(claim['mainsnak']['datavalue']['value']['numeric-id']))
+          .toList();
+      });
     }
 
     return new Item(labels, descriptions, aliases, statements);
@@ -53,7 +58,13 @@ class Item {
 }
 
 class ItemValue {
-  final String id;
+  final int id;
 
   ItemValue(this.id);
+
+  @override
+  operator ==(other) => other is ItemValue && other.id == id;
+
+  @override
+  get hashCode => id.hashCode;
 }
