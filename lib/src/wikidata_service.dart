@@ -36,7 +36,28 @@ class WikidataService {
       aliases = flattenLocals(data['aliases']);
       data['claims']?.forEach((property, claims) {
         statements[property] = claims
-          .map((claim) => new ItemValue(claim['mainsnak']['datavalue']['value']['numeric-id']))
+          .map((claim) {
+            final type = claim['mainsnak']['datatype'];
+            final references = {};
+            claim['references']?.forEach((reference) {
+              reference['snaks']?.forEach((property, reference) {
+                references[property] = reference
+                  .map((reference) => new ItemValue(reference['datavalue']['value']['numeric-id']))
+                  .toList();
+              });
+            });
+            if (type == 'wikibase-item') {
+              return new ItemValue(
+                claim['mainsnak']['datavalue']['value']['numeric-id'],
+                references: references
+              );
+            } else if (type == 'string') {
+              return new StringValue(
+                claim['mainsnak']['datavalue']['value'],
+                references: references
+              );
+            }
+          })
           .toList();
       });
     }
@@ -58,13 +79,15 @@ class Item {
 }
 
 abstract class Value {
-  final Map<String, List<ItemValue>> references = {};
+  final Map<String, List<ItemValue>> references;
+
+  Value({this.references});
 }
 
 class ItemValue extends Value {
   final int id;
 
-  ItemValue(this.id);
+  ItemValue(this.id, {Map<String, List<ItemValue>> references}) : super(references: references);
 
   @override
   operator ==(other) => other is ItemValue && other.id == id;
@@ -79,5 +102,14 @@ class ItemValue extends Value {
 class StringValue extends Value {
   final String value;
 
-  StringValue(this.value);
+  StringValue(this.value, {Map<String, List<ItemValue>> references}) : super(references: references);
+
+  @override
+  operator ==(other) => other is StringValue && other.value == value;
+
+  @override
+  get hashCode => value.hashCode;
+
+  @override
+  toString() => 'StringValue(Q$value)';
 }
