@@ -224,6 +224,17 @@ main() {
           'P42': [new Statement(new StringValue('foo')), new Statement(new StringValue('bar'))]
         }));
       });
+
+      it('should work if no existing statement of that property exists', () async {
+        final oldItem = new Item({'en': 'test'}, {}, {}, {});
+        final newItem = await target.addStatement(
+          oldItem, 'P42', new Statement(new StringValue('bar'))
+        );
+
+        expect(newItem).toEqual(new Item({'en': 'test'}, {}, {}, {
+          'P42': [new Statement(new StringValue('foo')), new Statement(new StringValue('bar'))]
+        }));
+      });
     });
   });
 }
