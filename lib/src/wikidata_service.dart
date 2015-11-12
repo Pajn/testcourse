@@ -67,4 +67,7 @@ class ItemValue {
 
   @override
   get hashCode => id.hashCode;
+
+  @override
+  toString() => 'ItemValue(Q$id)';
 }

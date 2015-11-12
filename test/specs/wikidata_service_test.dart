@@ -32,6 +32,26 @@ locals(Map languages) {
   return locals;
 }
 
+itemStatement(String statementId, String property, int itemId) => {
+  'mainsnak': {
+      'snaktype': 'value',
+      'property': property,
+      'datavalue': {
+          'value': {
+              'entity-type': 'item',
+              'numeric-id': itemId
+          },
+          'type': 'wikibase-entityid'
+      },
+      'datatype': 'wikibase-item'
+  },
+  'type': 'statement',
+  'id': statementId,
+  'rank': 'normal'
+};
+
+
+
 response(Map body, {int statusCode: 200}) async => new Response(JSON.encode(body), statusCode);
 
 main() {
@@ -151,23 +171,7 @@ main() {
               'entities': {
                 'Q1': {
                   'claims': {
-                    'P31': [{
-                        'mainsnak': {
-                            'snaktype': "value",
-                            'property': "P31",
-                            'datavalue': {
-                                'value': {
-                                    'entity-type': 'item',
-                                    'numeric-id': 1454986
-                                },
-                                'type': 'wikibase-entityid'
-                            },
-                            'datatype': 'wikibase-item'
-                        },
-                        'type': 'statement',
-                        'id': r'q1$0479EB23-FC5B-4EEC-9529-CEE21D6C6FA9',
-                        'rank': 'normal'
-                    }],
+                    'P31': [itemStatement(r'q1$0479EB23-FC5B-4EEC-9529-CEE21D6C6FA9', 'p31', 1454986)],
                   },
                 }
               }
@@ -177,23 +181,7 @@ main() {
               'entities': {
                 'Q2': {
                   'claims': {
-                    'P31': [{
-                        'mainsnak': {
-                            'snaktype': "value",
-                            'property': "P31",
-                            'datavalue': {
-                                'value': {
-                                    'entity-type': 'item',
-                                    'numeric-id': 3504248
-                                },
-                                'type': 'wikibase-entityid'
-                            },
-                            'datatype': 'wikibase-item'
-                        },
-                        'type': 'statement',
-                        'id': r'Q2$50fad68d-4f91-f878-6f29-e655af54690e',
-                        'rank': 'normal'
-                    }],
+                    'P31': [itemStatement(r'Q2$50fad68d-4f91-f878-6f29-e655af54690e', 'p31', 3504248)],
                   },
                 }
               }
