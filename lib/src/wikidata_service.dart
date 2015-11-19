@@ -32,7 +32,7 @@ encodeValue(Value value) {
   }
 }
 
-parseSnak(Map snak) {
+decodeValue(Map snak) {
   if (snak['datatype'] == 'wikibase-item') {
     return new ItemValue(snak['datavalue']['value']['numeric-id']);
   } else if (snak['datatype'] == 'string') {
@@ -94,19 +94,19 @@ class WikidataService {
 
             claim['qualifiers']?.forEach((property, qualifier) {
               qualifiers[property] = qualifier
-                .map(parseSnak)
+                .map(decodeValue)
                 .toList();
             });
             claim['references']?.forEach((reference) {
               reference['snaks']?.forEach((property, reference) {
                 references[property] = reference
-                  .map(parseSnak)
+                  .map(decodeValue)
                   .toList();
               });
             });
 
             return new Statement(
-              parseSnak(claim['mainsnak']),
+              decodeValue(claim['mainsnak']),
               qualifiers: qualifiers,
               references: references
             );
