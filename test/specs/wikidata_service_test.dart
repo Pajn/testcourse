@@ -235,6 +235,20 @@ main() {
           'P42': [new Statement(new StringValue('bar'))]
         }));
       });
+
+      it('should POST the data with a CSRF token', () async {
+        when(http.get(url({'action': 'query', 'meta': 'tokens'}))).thenReturn(response({
+          'batchcomplete': '',
+          'query': {'tokens': {'csrftoken': 'b126104g1n73412hd953521d0b43984e564da8ec+\\'}}
+        }));
+
+        final oldItem = new Item({'en': 'test'}, {}, {}, {});
+        await target.addStatement(oldItem, 'P42', new Statement(new StringValue('bar')));
+
+        verify(http.post(url({'action': 'wbcreateclaim', 'entity': 'Q1',
+                              'token': 'b126104g1n73412hd953521d0b43984e564da8ec+\\',
+                              'property': 'P42', 'snaktype': 'value', 'value': 'bar'})));
+      });
     });
   });
 }
