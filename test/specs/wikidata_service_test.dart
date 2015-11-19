@@ -253,6 +253,15 @@ main() {
                               'token': 'b126104g1n73412hd953521d0b43984e564da8ec+\\',
                               'property': 'P42', 'snaktype': 'value', 'value': '"bar"'})));
       });
+
+      it('should support ItemValues', () async {
+        final oldItem = new Item('Q1', {'en': 'test'}, {}, {}, {});
+        await target.addStatement(oldItem, 'P42', new Statement(new ItemValue(2)));
+
+        verify(http.post(url({'action': 'wbcreateclaim', 'entity': 'Q1', 'token': 'token',
+                              'property': 'P42', 'snaktype': 'value',
+                              'value': '{"entity-type":"item","numeric-id":2}'})));
+      });
     });
   });
 }
