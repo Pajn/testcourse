@@ -15,10 +15,11 @@ main() {
       http = new MockClient();
       target = new WikidataService(http);
       when(http.get(any)).thenReturn(response({}));
-      when(http.get(url({'action': 'query', 'meta': 'tokens'}))).thenReturn(response({
-        'batchcomplete': '',
-        'query': {'tokens': {'csrftoken': 'token'}}
-      }));
+      when(http.get(url({'action': 'query', 'meta': 'tokens', 'format': 'json'}))).
+          thenReturn(response({
+            'batchcomplete': '',
+            'query': {'tokens': {'csrftoken': 'token'}}
+          }));
     });
 
     describe('#getItem', () {
@@ -241,10 +242,11 @@ main() {
       });
 
       it('should POST the data with a CSRF token', () async {
-        when(http.get(url({'action': 'query', 'meta': 'tokens'}))).thenReturn(response({
-          'batchcomplete': '',
-          'query': {'tokens': {'csrftoken': 'b126104g1n73412hd953521d0b43984e564da8ec+\\'}}
-        }));
+        when(http.get(url({'action': 'query', 'meta': 'tokens', 'format': 'json'}))).
+            thenReturn(response({
+              'batchcomplete': '',
+              'query': {'tokens': {'csrftoken': 'b126104g1n73412hd953521d0b43984e564da8ec+\\'}}
+            }));
 
         final oldItem = new Item('Q1', {'en': 'test'}, {}, {}, {});
         await target.addStatement(oldItem, 'P42', new Statement(new StringValue('bar')));
@@ -280,6 +282,8 @@ main() {
                                 '"calendarmodel":"http://www.wikidata.org/entity/Q1985727"'
                               '}'})));
       });
+
+
     });
   });
 }

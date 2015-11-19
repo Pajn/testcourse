@@ -122,7 +122,7 @@ class WikidataService {
       http.get(new Uri.https('www.wikidata.org', '/w/api.php', queryParams).toString());
 
   Future<String> _getToken() async {
-    final response = await _get({'action': 'query', 'meta': 'tokens'});
+    final response = await _get({'action': 'query', 'meta': 'tokens', 'format': 'json'});
     return JSON.decode(response.body)['query']['tokens']['csrftoken'];
   }
 
