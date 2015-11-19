@@ -18,6 +18,8 @@ Map<String, String> flattenLocals(Map<String, Map<String, String>> locals) {
 encodeValue(Value value) {
   if (value is StringValue) {
     return JSON.encode(value.value);
+  } else if (value is ItemValue) {
+    return JSON.encode({'entity-type': 'item', 'numeric-id': value.id});
   }
 }
 
