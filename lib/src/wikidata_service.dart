@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart';
-import 'package:quiver/collection.dart';
-import 'package:quiver/core.dart';
 import 'package:wikidata/src/entities.dart';
 
 Map<String, String> flattenLocals(Map<String, Map<String, String>> locals) {
@@ -55,8 +53,7 @@ class WikidataService {
     statements[property].add(statement);
     final updatedItem = new Item(item.id, item.label, item.description, item.aliases, statements);
 
-    final response = await _get({'action': 'query', 'meta': 'tokens'});
-    final token = JSON.decode(response.body)['query']['tokens']['csrftoken'];
+    final token = await _getToken();
 
     await _post({'action': 'wbcreateclaim', 'entity': item.id, 'token': token,
                  'property': property, 'snaktype': 'value', 'value': encodeValue(statement.value)});
@@ -112,6 +109,11 @@ class WikidataService {
 
   Future<Response> _get(Map<String, String> queryParams) =>
       http.get(new Uri.https('www.wikidata.org', '/w/api.php', queryParams).toString());
+
+  Future<String> _getToken() async {
+    final response = await _get({'action': 'query', 'meta': 'tokens'});
+    return JSON.decode(response.body)['query']['tokens']['csrftoken'];
+  }
 
   Future<Response> _post(Map<String, String> queryParams) =>
       http.post(new Uri.https('www.wikidata.org', '/w/api.php', queryParams).toString());
