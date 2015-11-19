@@ -13,12 +13,13 @@ bool _multiMapEquals(Map a, Map b) {
 }
 
 class Item {
+  final String id;
   final Map<String, String> label;
   final Map<String, String> description;
   final Map<String, List<String>> aliases;
   final Map<String, List<Statement>> statements;
 
-  Item(this.label, this.description, this.aliases, this.statements);
+  Item(this.id, this.label, this.description, this.aliases, this.statements);
 
   @override
   operator ==(other) => other is Item &&

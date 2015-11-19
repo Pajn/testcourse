@@ -15,6 +15,10 @@ main() {
       http = new MockClient();
       target = new WikidataService(http);
       when(http.get(any)).thenReturn(response({}));
+      when(http.get(url({'action': 'query', 'meta': 'tokens'}))).thenReturn(response({
+        'batchcomplete': '',
+        'query': {'tokens': {'csrftoken': 'token'}}
+      }));
     });
 
     describe('#getItem', () {
@@ -210,28 +214,28 @@ main() {
 
     describe('#addStatement', () {
       it('should return a new Item with the statement added', () async {
-        final oldItem = new Item({'en': 'test'}, {}, {}, {'P42': [
+        final oldItem = new Item('Q1', {'en': 'test'}, {}, {}, {'P42': [
           new Statement(new StringValue('foo'))
         ]});
         final newItem = await target.addStatement(
           oldItem, 'P42', new Statement(new StringValue('bar'))
         );
 
-        expect(oldItem).toEqual(new Item({'en': 'test'}, {}, {}, {
+        expect(oldItem).toEqual(new Item('Q1', {'en': 'test'}, {}, {}, {
           'P42': [new Statement(new StringValue('foo'))]
         }));
-        expect(newItem).toEqual(new Item({'en': 'test'}, {}, {}, {
+        expect(newItem).toEqual(new Item('Q1', {'en': 'test'}, {}, {}, {
           'P42': [new Statement(new StringValue('foo')), new Statement(new StringValue('bar'))]
         }));
       });
 
       it('should work if no existing statement of that property exists', () async {
-        final oldItem = new Item({'en': 'test'}, {}, {}, {});
+        final oldItem = new Item('Q1', {'en': 'test'}, {}, {}, {});
         final newItem = await target.addStatement(
           oldItem, 'P42', new Statement(new StringValue('bar'))
         );
 
-        expect(newItem).toEqual(new Item({'en': 'test'}, {}, {}, {
+        expect(newItem).toEqual(new Item('Q1', {'en': 'test'}, {}, {}, {
           'P42': [new Statement(new StringValue('bar'))]
         }));
       });
@@ -242,12 +246,12 @@ main() {
           'query': {'tokens': {'csrftoken': 'b126104g1n73412hd953521d0b43984e564da8ec+\\'}}
         }));
 
-        final oldItem = new Item({'en': 'test'}, {}, {}, {});
+        final oldItem = new Item('Q1', {'en': 'test'}, {}, {}, {});
         await target.addStatement(oldItem, 'P42', new Statement(new StringValue('bar')));
 
         verify(http.post(url({'action': 'wbcreateclaim', 'entity': 'Q1',
                               'token': 'b126104g1n73412hd953521d0b43984e564da8ec+\\',
-                              'property': 'P42', 'snaktype': 'value', 'value': 'bar'})));
+                              'property': 'P42', 'snaktype': 'value', 'value': '"bar"'})));
       });
     });
   });
