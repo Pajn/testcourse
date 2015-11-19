@@ -118,7 +118,11 @@ class WikidataService {
     return new Item(id, labels, descriptions, aliases, statements);
   }
 
-  Future login(String user, String password) async {}
+  Future login(String user, String password) async {
+    final response = await _post({'action': 'login', 'lgname': user, 'lgpassword': password});
+    final token = JSON.decode(response.body)['login']['token'];
+    await _post({'action': 'login', 'lgname': user, 'lgpassword': password, 'lgtoken': token});
+  }
 
   Future<Response> _get(Map<String, String> queryParams) =>
       http.get(new Uri.https('www.wikidata.org', '/w/api.php', queryParams).toString());

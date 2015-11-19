@@ -286,7 +286,7 @@ main() {
 
     describe('#login', () {
       it('should support login', () async {
-        when(http.post(url({'action': 'login', 'lgname': 'user', 'lgpasword': 'password'}))).
+        when(http.post(url({'action': 'login', 'lgname': 'user', 'lgpassword': 'password'}))).
             thenReturn(response({
               'login': {
                 'result': 'NeedToken',
@@ -296,7 +296,7 @@ main() {
 
         await target.login('user', 'password');
 
-        verify(http.post(url({'action': 'login', 'lgname': 'user', 'lgpasword': 'password',
+        verify(http.post(url({'action': 'login', 'lgname': 'user', 'lgpassword': 'password',
                               'lgtoken': 'dfgdfg8d9gfj9584j9345t34jt348'})));
       });
     });
