@@ -20,6 +20,15 @@ encodeValue(Value value) {
     return JSON.encode(value.value);
   } else if (value is ItemValue) {
     return JSON.encode({'entity-type': 'item', 'numeric-id': value.id});
+  } else if (value is TimeValue) {
+    return JSON.encode({
+      'time': value.time,
+      'timezone': value.timezone,
+      'before': value.before,
+      'after': value.after,
+      'precision': value.precision,
+      'calendarmodel': value.calendarmodel,
+    });
   }
 }
 
