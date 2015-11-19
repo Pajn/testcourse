@@ -262,6 +262,24 @@ main() {
                               'property': 'P42', 'snaktype': 'value',
                               'value': '{"entity-type":"item","numeric-id":2}'})));
       });
+
+      it('should support TimeValues', () async {
+        final oldItem = new Item('Q1', {'en': 'test'}, {}, {}, {});
+        await target.addStatement(oldItem, 'P42', new Statement(
+          new TimeValue('-13798000000-00-00T00:00:00Z', 3)
+        ));
+
+        verify(http.post(url({'action': 'wbcreateclaim', 'entity': 'Q1', 'token': 'token',
+                              'property': 'P42', 'snaktype': 'value',
+                              'value': '{'
+                                '"time":"-13798000000-00-00T00:00:00Z",'
+                                '"timezone":0,'
+                                '"before":0,'
+                                '"after":0,'
+                                '"precision":3,'
+                                '"calendarmodel":"http://www.wikidata.org/entity/Q1985727"'
+                              '}'})));
+      });
     });
   });
 }
