@@ -282,8 +282,23 @@ main() {
                                 '"calendarmodel":"http://www.wikidata.org/entity/Q1985727"'
                               '}'})));
       });
+    });
 
+    describe('#login', () {
+      it('should support login', () async {
+        when(http.post(url({'action': 'login', 'lgname': 'user', 'lgpasword': 'password'}))).
+            thenReturn(response({
+              'login': {
+                'result': 'NeedToken',
+                'token': 'dfgdfg8d9gfj9584j9345t34jt348'
+              }
+            }));
 
+        await target.login('user', 'password');
+
+        verify(http.post(url({'action': 'login', 'lgname': 'user', 'lgpasword': 'password',
+                              'lgtoken': 'dfgdfg8d9gfj9584j9345t34jt348'})));
+      });
     });
   });
 }

@@ -118,6 +118,8 @@ class WikidataService {
     return new Item(id, labels, descriptions, aliases, statements);
   }
 
+  Future login(String user, String password) async {}
+
   Future<Response> _get(Map<String, String> queryParams) =>
       http.get(new Uri.https('www.wikidata.org', '/w/api.php', queryParams).toString());
 
