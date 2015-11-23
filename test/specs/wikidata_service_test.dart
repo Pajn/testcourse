@@ -186,6 +186,8 @@ main() {
 
         expect(item.statements['P227']).toEqual([new Statement(
           new StringValue('4015139-6'),
+          id: r'q2$B43AE569-AB2C-4E4F-BA90-DC56CD6DD24B',
+          property: 'P227',
           references: {'P143': [new ItemValue(36578)]}
         )]);
       });
@@ -214,6 +216,8 @@ main() {
 
         expect(item.statements['P580']).toEqual([new Statement(
           new TimeValue('-13798000000-00-00T00:00:00Z', 3),
+          id: r'Q1$789eef0c-4108-cdda-1a63-505cdd324564',
+          property: 'P580',
           qualifiers: {
             'P459': [new ItemValue(15605), new ItemValue(76250)],
             'P805': [new ItemValue(500699)],

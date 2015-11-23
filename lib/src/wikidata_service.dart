@@ -179,6 +179,8 @@ class WikidataService {
 
             return new Statement(
               decodeValue(claim['mainsnak']),
+              id: claim['id'],
+              property: claim['mainsnak']['property'],
               qualifiers: qualifiers,
               references: references
             );

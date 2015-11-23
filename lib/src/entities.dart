@@ -56,7 +56,8 @@ class Statement {
   get hashCode => hashObjects([value, qualifiers, references]);
 
   @override
-  toString() => 'Statement($value, qualifiers: $qualifiers, references: $references)';
+  toString() => 'Statement($value, id: $id, property: $property, '
+                          'qualifiers: $qualifiers, references: $references)';
 }
 
 abstract class Value {}
