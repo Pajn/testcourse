@@ -38,17 +38,21 @@ class Statement {
   final Value value;
   final String id;
   final String property;
+  final String rank;
 
   final Map<String, List<Value>> qualifiers;
   final Map<String, List<Value>> references;
 
-  Statement(this.value, {this.id, this.property,
+  Statement(this.value, {this.id, this.property, String rank,
       Map<String, List<Value>> qualifiers, Map<String, List<Value>> references
-    }) : this.qualifiers = qualifiers ?? {}, this.references = references ?? {};
+    })
+    : this.rank = rank ?? 'normal',
+      this.qualifiers = qualifiers ?? {},
+      this.references = references ?? {};
 
   @override
   operator ==(other) => other is Statement && other.value == value &&
-    other.id == id && other.property == property &&
+    other.id == id && other.property == property && other.rank == rank &&
     _multiMapEquals(other.qualifiers, qualifiers) &&
     _multiMapEquals(other.references, references);
 

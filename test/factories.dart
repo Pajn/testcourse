@@ -71,12 +71,12 @@ timeSnak(String property, String time, int precision, {
   'datatype': 'time'
 };
 
-statement(String statementId, mainsnak, {Map qualifiers, Map references}) {
+statement(String statementId, mainsnak, {String rank: 'normal', Map qualifiers, Map references}) {
   final statement = {
     'mainsnak': mainsnak,
     'type': 'statement',
     'id': statementId,
-    'rank': 'normal',
+    'rank': rank,
   };
 
   if (qualifiers != null) {

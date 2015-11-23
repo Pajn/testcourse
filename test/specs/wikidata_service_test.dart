@@ -224,6 +224,41 @@ main() {
           }
         )]);
       });
+
+      it('should set the rank of a statement', () async {
+        when(http.get(url({'action': 'wbgetentities', 'entity': 'Q1', 'format': 'json'}))).
+            thenReturn(response({
+              'entities': {
+                'Q1': {
+                  'claims': {
+                    'P31': [statement(
+                      r'q1$0479EB23-FC5B-4EEC-9529-CEE21D6C6FA9',
+                      itemSnak('p31', 1454986)
+                    )],
+                    'P32': [statement(
+                      r'q1$0479EB23-FC5B-4EEC-9529-CEE21D6C6FA9',
+                      itemSnak('p32', 1454986),
+                      rank: 'preferred'
+                    )],
+                  },
+                }
+              }
+            }));
+
+        final item = await target.getItem('Q1');
+
+        expect(item.statements['P31']).toEqual([new Statement(
+          new ItemValue(1454986),
+          id: r'q1$0479EB23-FC5B-4EEC-9529-CEE21D6C6FA9',
+          property: 'p31'
+        )]);
+        expect(item.statements['P32']).toEqual([new Statement(
+          new ItemValue(1454986),
+          id: r'q1$0479EB23-FC5B-4EEC-9529-CEE21D6C6FA9',
+          property: 'p32',
+          rank: 'preffered'
+        )]);
+      });
     });
 
     describe('#addStatement', () {
