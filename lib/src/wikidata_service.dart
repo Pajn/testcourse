@@ -91,6 +91,7 @@ class WikidataService {
       statement.value,
       id: statement.id,
       property: statement.property,
+      rank: statement.rank,
       qualifiers: allQualifiers,
       references: statement.references
     );
@@ -99,7 +100,7 @@ class WikidataService {
       'mainsnak': encodeSnak(statement.property, statement.value),
       'type': 'statement',
       'id': statement.id,
-      'rank': 'normal',
+      'rank': statement.rank,
     };
 
     if (statement.qualifiers.isNotEmpty) {
