@@ -85,7 +85,7 @@ statement(String statementId, mainsnak, {Map qualifiers, Map references}) {
     qualifiers.forEach((property, snaks) {
       statement['qualifiers'][property] = snaks;
     });
-    statement['qualifiers-order'] = qualifiers.values.toList();
+    statement['qualifiers-order'] = qualifiers.keys.toList();
   }
 
   if (references != null) {

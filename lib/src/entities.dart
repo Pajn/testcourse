@@ -37,12 +37,13 @@ class Item {
 class Statement {
   final Value value;
   final String id;
+  final String property;
 
   final Map<String, List<Value>> qualifiers;
   final Map<String, List<Value>> references;
 
-  Statement(this.value, {
-      this.id, Map<String, List<Value>> qualifiers, Map<String, List<Value>> references
+  Statement(this.value, {this.id, this.property,
+      Map<String, List<Value>> qualifiers, Map<String, List<Value>> references
     }) : this.qualifiers = qualifiers ?? {}, this.references = references ?? {};
 
   @override

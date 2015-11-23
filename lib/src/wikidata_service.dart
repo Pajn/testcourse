@@ -50,6 +50,24 @@ decodeValue(Map snak) {
   }
 }
 
+encodeSnak(String property, Value value) {
+  var datavalue;
+  var datatype;
+  if (value is StringValue) {
+    datavalue = {'value': value.value, 'type': 'string'};
+    datatype = 'string';
+  } else if (value is ItemValue) {
+    datavalue = {'value': {'entity-type': 'item', 'numeric-id': value.id}, 'type': 'wikibase-entityid'};
+    datatype = 'wikibase-item';
+  }
+  return {
+    'snaktype': 'value',
+    'property': property,
+    'datavalue': datavalue,
+    'datatype': datatype,
+  };
+}
+
 class WikidataService {
   final RegExp idPattern = new RegExp(r'Q\d+');
   final Client http;
@@ -65,11 +83,45 @@ class WikidataService {
         allQualifiers[property] = new List.from(qualifiers);
       }
     });
-    return new Statement(
+
+    statement = new Statement(
       statement.value,
+      id: statement.id,
+      property: statement.property,
       qualifiers: allQualifiers,
       references: statement.references
     );
+
+    final json = {
+      'mainsnak': encodeSnak(statement.property, statement.value),
+      'type': 'statement',
+      'id': statement.id,
+      'rank': 'normal',
+    };
+
+    if (statement.qualifiers.isNotEmpty) {
+      json['qualifiers'] = {};
+      statement.qualifiers.forEach((property, values) {
+        json['qualifiers'][property] = values.map((value) => encodeSnak(property, value)).toList();
+      });
+      json['qualifiers-order'] = json['qualifiers'].keys.toList();
+    }
+
+    if (statement.references.isNotEmpty) {
+      json['references'] = [];
+      statement.references.forEach((property, values) {
+        json['references'].add({
+          'snaks': {property: values.map((value) => encodeSnak(property, value)).toList()},
+          'snaks-order': [property],
+        });
+      });
+    }
+
+    final token = await _getToken();
+
+    await _post({'action': 'wbsetclaim', 'claim': JSON.encode(json), 'token': token});
+
+    return statement;
   }
 
   Future<Item> addStatement(Item item, String property, Statement statement) async {

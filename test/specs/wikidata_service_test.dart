@@ -364,6 +364,7 @@ main() {
         final oldStatement = new Statement(
           new StringValue('foo'),
           id: r'Q2$5627445f-43cb-ed6d-3adb-760e85bd17ee',
+          property: 'P1',
           qualifiers: {
             'P405': [new ItemValue(15605)],
             'P805': [new ItemValue(64024)],
@@ -383,11 +384,11 @@ main() {
                                 stringSnak('P1', 'foo'),
                                 qualifiers: {
                                   'P405': [itemSnak('P405', 15605)],
-                                  'P459': [itemSnak('P459', 15605), itemSnak('P459', 76250)],
                                   'P805': [itemSnak('P805', 64024), itemSnak('P805', 500699)],
+                                  'P459': [itemSnak('P459', 15605), itemSnak('P459', 76250)],
                                 },
                                 references: {
-                                  'P143': [itemSnak('P143', 36578)],
+                                  'P143': itemSnak('P143', 36578),
                                 }
                               )),
                               'token': 'b126104g1n73412hd953521d0b43984e564da8ec+\\'})));
