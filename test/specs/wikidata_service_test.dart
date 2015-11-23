@@ -412,6 +412,7 @@ main() {
           new StringValue('foo'),
           id: r'Q2$5627445f-43cb-ed6d-3adb-760e85bd17ee',
           property: 'P1',
+          rank: 'preffered',
           qualifiers: {
             'P405': [new ItemValue(15605)],
             'P805': [new ItemValue(64024)],
@@ -429,6 +430,7 @@ main() {
         verify(http.post(url({'action': 'wbsetclaim', 'claim': JSON.encode(statement(
                                 r'Q2$5627445f-43cb-ed6d-3adb-760e85bd17ee',
                                 stringSnak('P1', 'foo'),
+                                rank: 'preffered',
                                 qualifiers: {
                                   'P405': [itemSnak('P405', 15605)],
                                   'P805': [itemSnak('P805', 64024), itemSnak('P805', 500699)],
