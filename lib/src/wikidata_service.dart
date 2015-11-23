@@ -57,7 +57,19 @@ class WikidataService {
   WikidataService(this.http);
 
   Future<Statement> addQualifiers(Statement statement, Map<String, List<Value>> qualifiers) async {
-    return new Statement(statement.value, qualifiers: qualifiers);
+    final allQualifiers = new Map.from(statement.qualifiers);
+    qualifiers.forEach((property, qualifiers) {
+      if (allQualifiers.containsKey(property)) {
+        allQualifiers[property] = new List.from(allQualifiers[property])..addAll(qualifiers);
+      } else {
+        allQualifiers[property] = new List.from(qualifiers);
+      }
+    });
+    return new Statement(
+      statement.value,
+      qualifiers: allQualifiers,
+      references: statement.references
+    );
   }
 
   Future<Item> addStatement(Item item, String property, Statement statement) async {
