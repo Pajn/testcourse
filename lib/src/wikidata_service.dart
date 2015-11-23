@@ -181,6 +181,7 @@ class WikidataService {
               decodeValue(claim['mainsnak']),
               id: claim['id'],
               property: claim['mainsnak']['property'],
+              rank: claim['rank'],
               qualifiers: qualifiers,
               references: references
             );

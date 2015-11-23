@@ -60,7 +60,7 @@ class Statement {
   get hashCode => hashObjects([value, qualifiers, references]);
 
   @override
-  toString() => 'Statement($value, id: $id, property: $property, '
+  toString() => 'Statement($value, id: $id, property: $property, rank: $rank, '
                           'qualifiers: $qualifiers, references: $references)';
 }
 
