@@ -300,5 +300,23 @@ main() {
                               'lgtoken': 'dfgdfg8d9gfj9584j9345t34jt348'})));
       });
     });
+
+    describe('#addQualifiers', () {
+      it('should return a new statement with the qualifers added', () async {
+        final oldStatement = new Statement(new StringValue('foo'));
+        final newStatement = await target.addQualifiers(
+          oldStatement, {
+            'P459': [new ItemValue(15605), new ItemValue(76250)],
+            'P805': [new ItemValue(500699)],
+          }
+        );
+
+        expect(oldStatement).toEqual(new Statement(new StringValue('foo')));
+        expect(newStatement).toEqual(new Statement(new StringValue('foo'), qualifiers: {
+          'P459': [new ItemValue(15605), new ItemValue(76250)],
+          'P805': [new ItemValue(500699)],
+        }));
+      });
+    });
   });
 }
