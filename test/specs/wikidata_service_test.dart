@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:guinness2/guinness2.dart';
 import 'package:http/http.dart';
 import 'package:mockito/mockito.dart';
@@ -351,6 +352,45 @@ main() {
           references: {
             'P143': [new ItemValue(36578)],
           }));
+      });
+
+      it('should POST the data with a CSRF token', () async {
+        when(http.get(url({'action': 'query', 'meta': 'tokens', 'format': 'json'}))).
+            thenReturn(response({
+              'batchcomplete': '',
+              'query': {'tokens': {'csrftoken': 'b126104g1n73412hd953521d0b43984e564da8ec+\\'}}
+            }));
+
+        final oldStatement = new Statement(
+          new StringValue('foo'),
+          id: r'Q2$5627445f-43cb-ed6d-3adb-760e85bd17ee',
+          qualifiers: {
+            'P405': [new ItemValue(15605)],
+            'P805': [new ItemValue(64024)],
+          },
+          references: {
+            'P143': [new ItemValue(36578)],
+          });
+        await target.addQualifiers(
+          oldStatement, {
+            'P459': [new ItemValue(15605), new ItemValue(76250)],
+            'P805': [new ItemValue(500699)],
+          }
+        );
+
+        verify(http.post(url({'action': 'wbsetclaim', 'claim': JSON.encode(statement(
+                                r'Q2$5627445f-43cb-ed6d-3adb-760e85bd17ee',
+                                stringSnak('P1', 'foo'),
+                                qualifiers: {
+                                  'P405': [itemSnak('P405', 15605)],
+                                  'P459': [itemSnak('P459', 15605), itemSnak('P459', 76250)],
+                                  'P805': [itemSnak('P805', 64024), itemSnak('P805', 500699)],
+                                },
+                                references: {
+                                  'P143': [itemSnak('P143', 36578)],
+                                }
+                              )),
+                              'token': 'b126104g1n73412hd953521d0b43984e564da8ec+\\'})));
       });
     });
   });

@@ -36,12 +36,14 @@ class Item {
 
 class Statement {
   final Value value;
+  final String id;
 
   final Map<String, List<Value>> qualifiers;
   final Map<String, List<Value>> references;
 
-  Statement(this.value, {Map<String, List<Value>> qualifiers, Map<String, List<Value>> references})
-    : this.qualifiers = qualifiers ?? {}, this.references = references ?? {};
+  Statement(this.value, {
+      this.id, Map<String, List<Value>> qualifiers, Map<String, List<Value>> references
+    }) : this.qualifiers = qualifiers ?? {}, this.references = references ?? {};
 
   @override
   operator ==(other) => other is Statement && other.value == value &&
