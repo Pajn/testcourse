@@ -48,6 +48,7 @@ class Statement {
 
   @override
   operator ==(other) => other is Statement && other.value == value &&
+    other.id == id && other.property == property &&
     _multiMapEquals(other.qualifiers, qualifiers) &&
     _multiMapEquals(other.references, references);
 

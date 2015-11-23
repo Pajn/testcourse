@@ -154,8 +154,16 @@ main() {
         final item1 = await target.getItem('Q1');
         final item2 = await target.getItem('Q2');
 
-        expect(item1.statements['P31']).toEqual([new Statement(new ItemValue(1454986))]);
-        expect(item2.statements['P31']).toEqual([new Statement(new ItemValue(3504248))]);
+        expect(item1.statements['P31']).toEqual([new Statement(
+          new ItemValue(1454986),
+          id: r'q1$0479EB23-FC5B-4EEC-9529-CEE21D6C6FA9',
+          property: 'p31'
+        )]);
+        expect(item2.statements['P31']).toEqual([new Statement(
+          new ItemValue(3504248),
+          id: r'Q2$50fad68d-4f91-f878-6f29-e655af54690e',
+          property: 'p31'
+        )]);
       });
 
       it('should set the references of a statement', () async {
