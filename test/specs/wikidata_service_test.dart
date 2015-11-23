@@ -317,6 +317,41 @@ main() {
           'P805': [new ItemValue(500699)],
         }));
       });
+
+      it('should keep old qualifers and references', () async {
+        final oldStatement = new Statement(new StringValue('foo'),
+          qualifiers: {
+            'P405': [new ItemValue(15605)],
+            'P805': [new ItemValue(64024)],
+          },
+          references: {
+            'P143': [new ItemValue(36578)],
+          });
+        final newStatement = await target.addQualifiers(
+          oldStatement,
+          {
+            'P459': [new ItemValue(15605)],
+            'P805': [new ItemValue(500699)],
+          });
+
+        expect(oldStatement).toEqual(new Statement(new StringValue('foo'),
+          qualifiers: {
+            'P405': [new ItemValue(15605)],
+            'P805': [new ItemValue(64024)],
+          },
+          references: {
+            'P143': [new ItemValue(36578)],
+          }));
+        expect(newStatement).toEqual(new Statement(new StringValue('foo'),
+          qualifiers: {
+            'P405': [new ItemValue(15605)],
+            'P459': [new ItemValue(15605)],
+            'P805': [new ItemValue(64024), new ItemValue(500699)],
+          },
+          references: {
+            'P143': [new ItemValue(36578)],
+          }));
+      });
     });
   });
 }
