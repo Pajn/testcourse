@@ -17,18 +17,18 @@ Map<String, String> flattenLocals(Map<String, Map<String, String>> locals) {
 
 encodeValue(Value value) {
   if (value is StringValue) {
-    return JSON.encode(value.value);
+    return value.value;
   } else if (value is ItemValue) {
-    return JSON.encode({'entity-type': 'item', 'numeric-id': value.id});
+    return {'entity-type': 'item', 'numeric-id': value.id};
   } else if (value is TimeValue) {
-    return JSON.encode({
+    return {
       'time': value.time,
       'timezone': value.timezone,
       'before': value.before,
       'after': value.after,
       'precision': value.precision,
       'calendarmodel': value.calendarmodel,
-    });
+    };
   }
 }
 
@@ -51,19 +51,22 @@ decodeValue(Map snak) {
 }
 
 encodeSnak(String property, Value value) {
-  var datavalue;
+  var type;
   var datatype;
   if (value is StringValue) {
-    datavalue = {'value': value.value, 'type': 'string'};
+    type = 'string';
     datatype = 'string';
   } else if (value is ItemValue) {
-    datavalue = {'value': {'entity-type': 'item', 'numeric-id': value.id}, 'type': 'wikibase-entityid'};
+    type = 'wikibase-entityid';
     datatype = 'wikibase-item';
   }
   return {
     'snaktype': 'value',
     'property': property,
-    'datavalue': datavalue,
+    'datavalue': {
+      'value': encodeValue(value),
+      'type': type,
+    },
     'datatype': datatype,
   };
 }
@@ -135,7 +138,8 @@ class WikidataService {
     final token = await _getToken();
 
     await _post({'action': 'wbcreateclaim', 'entity': item.id, 'token': token,
-                 'property': property, 'snaktype': 'value', 'value': encodeValue(statement.value)});
+                 'property': property, 'snaktype': 'value',
+                 'value': JSON.encode(encodeValue(statement.value))});
 
     return updatedItem;
   }
